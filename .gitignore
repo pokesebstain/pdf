@@ -1,0 +1,18 @@
+# IDE
+.idea/
+*.iml
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temp files
+temp_*
+*.tmp
+*.bak
