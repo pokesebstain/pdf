@@ -54,18 +54,18 @@ jobs:
         
     - name: Verify build
       run: |
-        # Check for required files
-        if [ ! -f "dist/app.exe" ]; then
-          echo "::error::Missing app.exe!"
+        # Check for required files (PowerShell syntax)
+        if (!(Test-Path "dist\app.exe")) {
+          Write-Error "Missing app.exe!"
           exit 1
-        fi
-        if [ ! -f "dist/run_app.bat" ]; then
-          echo "::error::Missing run_app.bat!"
+        }
+        if (!(Test-Path "dist\run_app.bat")) {
+          Write-Error "Missing run_app.bat!"
           exit 1
-        fi
+        }
         
         # Test batch file syntax
-        cat dist/run_app.bat
+        Get-Content dist\run_app.bat
         
     - name: Upload artifact
       uses: actions/upload-artifact@v4
