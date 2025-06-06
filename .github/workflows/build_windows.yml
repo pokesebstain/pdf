@@ -30,20 +30,42 @@ jobs:
         echo set STREAMLIT_SERVER_PORT=8501 >> run_app.bat
         echo streamlit run app.py >> run_app.bat
         
+    - name: Create run script
+      run: |
+        # Create clean batch file without quotes
+        echo @echo off > run_app.bat
+        echo set STREAMLIT_SERVER_PORT=8501 >> run_app.bat
+        echo start "" "dist\app.exe" >> run_app.bat
+        
     - name: Build package
       run: |
         pip install pyinstaller
+        # Build with console window for debugging
         pyinstaller --onefile --add-data "app.py;." --add-data "requirements.txt;." --log-level DEBUG app.py
-        echo "=== Build Artifacts ==="
+        
+        # Verify build artifacts
+        echo "=== Build Contents ==="
         ls -R dist/
+        
+        # Copy all necessary files
         cp run_app.bat dist/
+        cp requirements.txt dist/
+        cp app.py dist/
         
     - name: Verify build
       run: |
+        # Check for required files
         if [ ! -f "dist/app.exe" ]; then
-          echo "::error::Build failed - app.exe not found!"
+          echo "::error::Missing app.exe!"
           exit 1
         fi
+        if [ ! -f "dist/run_app.bat" ]; then
+          echo "::error::Missing run_app.bat!"
+          exit 1
+        fi
+        
+        # Test batch file syntax
+        cat dist/run_app.bat
         
     - name: Upload artifact
       uses: actions/upload-artifact@v4
