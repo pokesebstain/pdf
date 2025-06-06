@@ -33,8 +33,17 @@ jobs:
     - name: Build package
       run: |
         pip install pyinstaller
-        pyinstaller --onefile --add-data "app.py;." --add-data "requirements.txt;." app.py
+        pyinstaller --onefile --add-data "app.py;." --add-data "requirements.txt;." --log-level DEBUG app.py
+        echo "=== Build Artifacts ==="
+        ls -R dist/
         cp run_app.bat dist/
+        
+    - name: Verify build
+      run: |
+        if [ ! -f "dist/app.exe" ]; then
+          echo "::error::Build failed - app.exe not found!"
+          exit 1
+        fi
         
     - name: Upload artifact
       uses: actions/upload-artifact@v4
