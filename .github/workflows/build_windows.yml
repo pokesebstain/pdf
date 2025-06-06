@@ -67,10 +67,24 @@ jobs:
         # Test batch file syntax
         Get-Content dist\run_app.bat
         
+    - name: Verify build artifacts
+      run: |
+        # 确保dist目录包含所有必要文件
+        $requiredFiles = @("app.exe", "run_app.bat", "requirements.txt", "app.py")
+        foreach ($file in $requiredFiles) {
+          if (!(Test-Path "dist\$file")) {
+            Write-Error "构建失败：缺少必要文件 $file"
+            exit 1
+          }
+        }
+        Write-Output "=== 构建产物验证通过 ==="
+        Get-ChildItem -Path dist -Recurse
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: pdf-web-app
         path: |
-          dist/run_app.exe
+          dist/*
           requirements.txt
+        retention-days: 3
